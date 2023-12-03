@@ -1,4 +1,7 @@
 import fastify from 'fastify'
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 const server = fastify()
 
@@ -6,7 +9,11 @@ server.get('/ping', async (request, reply) => {
   return 'pong\n'
 })
 
-server.listen({ port: 8080 }, (err, address) => {
+if (process.env.PORT === undefined) {
+  throw new Error('PORT must be defined')
+}
+
+server.listen({ port: parseInt(process.env.PORT) }, (err, address) => {
   if (err) {
     console.error(err)
     process.exit(1)
