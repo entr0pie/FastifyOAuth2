@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import HashingService from "../services/hashing-service";
+import HashingService from "../services/security/hashing-service";
 
 export default class UserRepository {
 
