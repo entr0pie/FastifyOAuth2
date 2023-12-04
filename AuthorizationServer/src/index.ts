@@ -1,23 +1,26 @@
-import fastify from 'fastify'
-import dotenv from 'dotenv'
+#!/bin/node
+
+import swagger from "@fastify/swagger";
+import swaggerUI from "@fastify/swagger-ui";
+import { withRefResolver } from "fastify-zod";
+
+import dotenv from 'dotenv';
+dotenv.config();
 
 import UserRepository from './repositories/user-repository'
 import UserController from './controllers/user/user-controller'
 import { PrismaClient } from '@prisma/client'
-import BcryptService from './services/bcrypt-service'
-
-dotenv.config()
-
-const server = fastify()
+import BcryptService from './services/security/bcrypt-service'
 
 const prisma = new PrismaClient();
 
 if (process.env.BCRYPT_SALT_ROUNDS === undefined) {
-  throw new Error('SALT_ROUNDS is not defined');
+  throw new Error('BCRYPT_SALT_ROUNDS is not defined');
 }
 
-const bcryptService = new BcryptService(parseInt(process.env.BCRYPT_SALT_ROUNDS));
+const server = require('fastify')({ logger: true });
 
+const bcryptService = new BcryptService(parseInt(process.env.BCRYPT_SALT_ROUNDS));
 const userRepository = new UserRepository(prisma, bcryptService);
 const userController = new UserController(userRepository);
 
@@ -28,11 +31,30 @@ if (process.env.PORT === undefined) {
 server.post('/api/users/register', userController.register.bind(userController));
 server.post('/api/users/login', userController.login.bind(userController));
 
-server.listen({ port: parseInt(process.env.PORT) }, (err, address) => {
-  if (err) {
-    console.error(err)
-    process.exit(1)
-  }
-  console.log(`Server listening at ${address}`)
+server.register(
+    swagger, withRefResolver({
+        openapi: {
+            info: {
+                title: "Authorization Server",
+                description: "API de Autenticação e Autorização",
+                version: "0.1.0",
+            }
+        }
+    })
+);
+
+server.register(swaggerUI, {
+    routePrefix: "/docs",
+    staticCSP: true,
 });
 
+if (process.env.PORT === undefined) {
+    throw new Error('PORT must be defined');
+}
+
+server.listen({
+    port: parseInt(process.env.PORT),
+    host: process.env.HOST,
+}, () => {
+    console.log(`Listening on ${process.env.HOST}:${process.env.PORT}`);
+});
