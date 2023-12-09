@@ -3,7 +3,6 @@ import { UserAuthorizationGuard } from 'src/user/security/guards/user-authorizat
 import { ApplicationService } from '../services/application.service';
 import { UserService } from 'src/user/services/user.service';
 import { ApplicationRegisterRequest } from './messages/application-register-request';
-import { application } from 'express';
 import { ApplicationRegisterResponse } from './messages/application-register-response';
 import { ApplicationUpdateRequest } from './messages/application-update-request';
 import { ApplicationUpdateResponse } from './messages/application-update-response';
@@ -34,7 +33,7 @@ export class ApplicationController {
         const email = jwt.payload.sub;
         const user = await this.userService.findByEmail(email);
 
-        const application = await this.applicationService.getByClientId(client_id);
+        const application = await this.applicationService.getByClientId(client_id, user.id);
         return application;
     }
     
@@ -73,7 +72,7 @@ export class ApplicationController {
         const user = await this.userService.findByEmail(email);
 
         try {
-            const application = await this.applicationService.delete(req.params.client_id);
+            const application = await this.applicationService.delete(req.params.client_id, user.id);
             return { client_id: application.client_id, redirect_url: application.redirect_url };
         } catch (error) {
             throw new BadRequestException(error.message);

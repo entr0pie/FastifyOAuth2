@@ -30,16 +30,17 @@ export class ApplicationService {
             });
     }
 
-    async getByClientId(client_id: string): Promise<ApplicationModel> {
+    async getByClientId(client_id: string, ownerId: string): Promise<ApplicationModel> {
         return await this.prisma.applicationModel.findUnique({
             where: {
+                owner: ownerId,
                 client_id: client_id,
             },
         });
     }
 
     async create(client_id: string, redirect_url: string, ownerId: string): Promise<ApplicationModel> {
-        const app = await this.getByClientId(client_id);
+        const app = await this.getByClientId(client_id, ownerId);
         
         if (app) {
             throw new Error('Application already exists');
@@ -64,20 +65,21 @@ export class ApplicationService {
         return await this.prisma.applicationModel.update({
             where: {
                 client_id: old_client_id,
+                owner: ownerId
             },
             data: {
                 client_id: client_id,
                 client_secret: client_secret,
                 redirect_url: redirect_url,
-                owner: ownerId,
             },
         });
     }
 
-    async delete(client_id: string): Promise<ApplicationModel> {
+    async delete(client_id: string, ownerId): Promise<ApplicationModel> {
         return await this.prisma.applicationModel.delete({
             where: {
                 client_id: client_id,
+                owner: ownerId,
             },
         });
     }
