@@ -1,4 +1,4 @@
-import { PrismaClient, Aplicacao } from '@prisma/client';
+import { ApplicationModel, PrismaClient } from '@prisma/client';
 
 /** Esse Repository faz o cadastro dos dados usando o `Prisma`.
  *  Para ele reconhecer os Schemas, execute:
@@ -10,8 +10,8 @@ import { PrismaClient, Aplicacao } from '@prisma/client';
 export class AplicationRepository {
   constructor(private prisma: PrismaClient) {}
 
-  async cadastrarAplicacao(aplicacaoData: Aplicacao) {
-    return this.prisma.aplicacao.create({
+  async cadastrarAplicacao(aplicacaoData: ApplicationModel) {
+    return this.prisma.applicationModel.create({
       data: aplicacaoData,
     });
   }

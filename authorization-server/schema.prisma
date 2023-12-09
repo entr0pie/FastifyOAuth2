@@ -10,8 +10,17 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model ApplicationModel {
+  id               String @id @default(uuid())
+  client_id        String
+  application_name String
+  request_url      String
+  scope            String
+  client_secret    String
+}
+
 model UserModel {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  password  String
+  id       String @id @default(uuid())
+  email    String @unique
+  password String
 }
