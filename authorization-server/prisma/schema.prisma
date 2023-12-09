@@ -19,7 +19,7 @@ model UserModel {
 
 model ApplicationModel {
   id             String   @id @default(uuid())
-  client_id      String
+  client_id      String   @unique
   client_secret  String
   redirect_url   String
   user           UserModel @relation(fields: [owner], references: [id])
