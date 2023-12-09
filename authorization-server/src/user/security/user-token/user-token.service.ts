@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { IUserTokenService } from './interface/user-token-service.interface';
 import { JWTVerifyResult, JWTPayload } from 'jose';
 import * as jose from 'jose';
@@ -12,7 +12,7 @@ export class UserTokenService implements IUserTokenService {
     private privateKey: jose.KeyLike;
 
     constructor(
-        private keyProvider: KeyProvider
+        @Inject(KeyProvider) private keyProvider: KeyProvider
     ) {
         this.keyProvider.generateKeyPair()
             .then((result) => {

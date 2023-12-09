@@ -3,3 +3,5 @@ import { JWTVerifier } from "src/security/base/jwt-verifier/jwt-verifier.interfa
 export interface IUserTokenService extends JWTVerifier {
     createToken(email: string): Promise<string>;
 }
+
+export const IUserTokenService = Symbol("IUserTokenService");

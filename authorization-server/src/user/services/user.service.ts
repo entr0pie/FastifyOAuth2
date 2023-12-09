@@ -1,12 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { HashProvider } from 'src/security/base/hash-provider/hash-provider.interface';
-import { PrismaProviderService } from 'src/services/prisma-provider/prisma-provider.service';
+import { PrismaProviderService } from 'src/database/prisma-provider/prisma-provider.service';
 
 @Injectable()
 export class UserService {
     constructor(
         private readonly prismaProvider: PrismaProviderService,
-        private readonly hashProvider: HashProvider
+        @Inject(HashProvider) private readonly hashProvider: HashProvider
     ) {}
 
     async findByEmail(email: string) {
