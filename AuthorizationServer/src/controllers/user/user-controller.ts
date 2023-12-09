@@ -1,12 +1,12 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import UserRepository from "../../repositories/user-repository";
 import RegisterRequest from "./messages/register-request";
-import UserTokenService from "../../services/security/tokens/user/user-token-service";
+import IUserTokenService from "../../services/security/tokens/user/user-token-service-interface";
 
 export default class UserController {
     constructor(
         private userRepository: UserRepository,
-        private jwtUserTokenService: UserTokenService
+        private jwtUserTokenService: IUserTokenService
     ) {}
 
     async register(request: FastifyRequest<{Body: RegisterRequest}>, reply: FastifyReply) {

@@ -11,7 +11,7 @@ import UserRepository from './repositories/user-repository'
 import UserController from './controllers/user/user-controller'
 import { PrismaClient } from '@prisma/client'
 import BcryptService from './services/security/hashing/bcrypt-service'
-import JWTUserTokenService from "./services/security/tokens/user/jwt-user-token-service";
+import UserTokenService from "./services/security/tokens/user/user-token-service";
 import * as jose from 'jose';
 
 async function main() {
@@ -28,7 +28,7 @@ async function main() {
     const userRepository = new UserRepository(prisma, bcryptService);
     
     const userKeyPair = await jose.generateKeyPair('RS256', { modulusLength: 2048 });
-    const jwtUserTokenService = new JWTUserTokenService(userKeyPair.privateKey, userKeyPair.publicKey);
+    const jwtUserTokenService = new UserTokenService(userKeyPair.privateKey, userKeyPair.publicKey);
 
     const userController = new UserController(userRepository, jwtUserTokenService);
     
