@@ -12,7 +12,7 @@
                 "<node_internals>/**"
             ],
             "program": "${workspaceFolder}/src/main.ts",
-            "preLaunchTask": "tsc: build - tsconfig.json",
+            "preLaunchTask": "nest build",
             "outFiles": [
                 "${workspaceFolder}/dist/**/*.js"
             ]

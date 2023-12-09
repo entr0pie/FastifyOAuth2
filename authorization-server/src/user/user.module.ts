@@ -6,6 +6,7 @@ import { HashModule } from 'src/security/hash/hash.module';
 import { KeysModule } from 'src/security/keys/keys.module';
 import { DatabaseModule } from 'src/database/database.module';
 import { IUserTokenService } from './security/user-token/interface/user-token-service.interface';
+import { UserAuthorizationGuard } from './security/guards/user-authorization/user-authorization.guard';
 
 @Module({
   controllers: [UserController],
@@ -15,7 +16,9 @@ import { IUserTokenService } from './security/user-token/interface/user-token-se
       provide: IUserTokenService,
       useClass: UserTokenService,
     },
+    UserAuthorizationGuard
   ],
   imports: [HashModule, KeysModule, DatabaseModule],
+  exports: [UserService, IUserTokenService, UserAuthorizationGuard]
 })
 export class UserModule {}
