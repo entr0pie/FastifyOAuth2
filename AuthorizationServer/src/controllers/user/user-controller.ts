@@ -1,10 +1,12 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import UserRepository from "../../repositories/user-repository";
 import RegisterRequest from "./messages/register-request";
+import UserTokenService from "../../services/security/tokens/user/user-token-service";
 
 export default class UserController {
     constructor(
-        private userRepository: UserRepository
+        private userRepository: UserRepository,
+        private jwtUserTokenService: UserTokenService
     ) {}
 
     async register(request: FastifyRequest<{Body: RegisterRequest}>, reply: FastifyReply) {
@@ -15,10 +17,7 @@ export default class UserController {
             await this.userRepository.register(email, password);
             reply.code(201).send();
         } catch (error) {
-            reply.code(400).send({
-                statusCode: 400,
-                error: 'Bad Request'
-            });
+            reply.code(400).send();
         }
     }
 
@@ -28,19 +27,16 @@ export default class UserController {
 
         try {
             if (await this.userRepository.checkCredentials(email, password)) {
-                reply.code(200).send();
+                const token = await this.jwtUserTokenService.createToken(email);
+                reply.code(200).send({ access_token: token });
             }
 
             reply.code(401).send({
-                statusCode: 401,
                 error: 'Unauthorized'
             });
             
         } catch (error) {
-            reply.code(400).send({
-                statusCode: 400,
-                error: 'Bad Request'
-            });
+            reply.code(400).send();
         }
     }
 
