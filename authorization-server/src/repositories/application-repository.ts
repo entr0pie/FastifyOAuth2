@@ -1,4 +1,3 @@
-// AplicationRepository.ts (Repositório)
 import { PrismaClient, Aplicacao } from '@prisma/client';
 
 /** Esse Repository faz o cadastro dos dados usando o `Prisma`.
