@@ -12,7 +12,7 @@ export class AplicationRepository {
 
   async cadastrarAplicacao(aplicacaoData: Aplicacao) {
     return this.prisma.aplicacao.create({
-      data: aplicacaoData
+      data: aplicacaoData,
     });
   }
 }

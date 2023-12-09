@@ -9,6 +9,11 @@ import { RS256KeyProvider } from './security/keys/key-provider/rs256-key-provide
 @Module({
   imports: [UserModule],
   controllers: [AppController],
-  providers: [AppService, PrismaProviderService, BcryptService, RS256KeyProvider],
+  providers: [
+    AppService,
+    PrismaProviderService,
+    BcryptService,
+    RS256KeyProvider,
+  ],
 })
 export class AppModule {}

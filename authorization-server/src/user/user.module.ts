@@ -5,6 +5,6 @@ import { UserTokenService } from './security/user-token/user-token.service';
 
 @Module({
   controllers: [UserController],
-  providers: [UserService, UserTokenService]
+  providers: [UserService, UserTokenService],
 })
 export class UserModule {}

@@ -6,32 +6,27 @@ import { KeyProvider } from 'src/security/base/key-provider/key-provider.interfa
 
 @Injectable()
 export class UserTokenService implements IUserTokenService {
+  public algorithm: string = 'RS256';
+  public publicKey: jose.KeyLike;
+  private privateKey: jose.KeyLike;
 
-    public algorithm: string = 'RS256';
-    public publicKey: jose.KeyLike;
-    private privateKey: jose.KeyLike;
+  constructor(private keyProvider: KeyProvider) {
+    this.keyProvider.generateKeyPair().then((result) => {
+      this.publicKey = result.publicKey;
+      this.privateKey = result.privateKey;
+    });
+  }
 
-    constructor(
-        private keyProvider: KeyProvider
-    ) {
-        this.keyProvider.generateKeyPair()
-            .then((result) => {
-                this.publicKey = result.publicKey;
-                this.privateKey = result.privateKey;
-            });
-    }
-
-    async createToken(email: string): Promise<string> {
-        return await new jose.SignJWT({})
-                        .setProtectedHeader({ alg: this.algorithm })
-                        .setIssuedAt()
-                        .setIssuer('resource-server')
-                        .setExpirationTime('2h')
-                        .setSubject(email)
-                        .sign(this.privateKey);
-    }
-    async verifyToken(token: string): Promise<JWTVerifyResult<JWTPayload>> {
-        return await jose.jwtVerify(token, this.publicKey);
-    }
-
+  async createToken(email: string): Promise<string> {
+    return await new jose.SignJWT({})
+      .setProtectedHeader({ alg: this.algorithm })
+      .setIssuedAt()
+      .setIssuer('resource-server')
+      .setExpirationTime('2h')
+      .setSubject(email)
+      .sign(this.privateKey);
+  }
+  async verifyToken(token: string): Promise<JWTVerifyResult<JWTPayload>> {
+    return await jose.jwtVerify(token, this.publicKey);
+  }
 }

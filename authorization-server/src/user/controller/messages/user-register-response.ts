@@ -1,2 +1,1 @@
-export interface UserRegisterResponse {
-}
+export interface UserRegisterResponse {}

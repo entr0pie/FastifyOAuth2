@@ -4,42 +4,42 @@ import { PrismaProviderService } from 'src/services/prisma-provider/prisma-provi
 
 @Injectable()
 export class UserService {
-    constructor(
-        private readonly prismaProvider: PrismaProviderService,
-        private readonly hashProvider: HashProvider
-    ) {}
+  constructor(
+    private readonly prismaProvider: PrismaProviderService,
+    private readonly hashProvider: HashProvider,
+  ) {}
 
-    async findByEmail(email: string) {
-        return await this.prismaProvider.getInstance().userModel.findUnique({
-            where: {
-                email: email
-            }
-        });
+  async findByEmail(email: string) {
+    return await this.prismaProvider.getInstance().userModel.findUnique({
+      where: {
+        email: email,
+      },
+    });
+  }
+
+  async register(email: string, password: string) {
+    const user = await this.findByEmail(email);
+    if (user) {
+      throw new Error('Email already exists');
     }
 
-    async register(email: string, password: string) {
-        const user = await this.findByEmail(email);
-        if (user) {
-            throw new Error('Email already exists')
-        }
+    const hashedPassword = await this.hashProvider.hashPassword(password);
 
-        const hashedPassword = await this.hashProvider.hashPassword(password);
+    return await this.prismaProvider.getInstance().userModel.create({
+      data: {
+        email: email,
+        password: hashedPassword,
+      },
+    });
+  }
 
-        return await this.prismaProvider.getInstance().userModel.create({
-            data: {
-                email: email,
-                password: hashedPassword
-            }
-        });
+  async checkCredentials(email: string, password: string) {
+    const user = await this.findByEmail(email);
+
+    if (!user) {
+      throw new Error('User not found');
     }
 
-    async checkCredentials(email: string, password: string) {
-        const user = await this.findByEmail(email);
-
-        if (!user) {
-            throw new Error('User not found');
-        }
-
-        return await this.hashProvider.comparePassword(password, user.password);
-    }   
+    return await this.hashProvider.comparePassword(password, user.password);
+  }
 }
